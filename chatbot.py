@@ -22,7 +22,7 @@ dp = Dispatcher()
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     logging.info(f"{message.from_user.id} использовал /start")
-    await message.answer("Привет! Я эхо-бот на aiogram 3. Используй /help для списка команд.")
+    await message.answer("Привет!11111111 Я эхо-бот на aiogram 3. Используй /help для списка команд.")
 
 # Команда /help
 @dp.message(Command("help"))
