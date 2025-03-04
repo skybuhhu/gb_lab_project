@@ -1,10 +1,12 @@
 import logging
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, types ,F
 from aiogram.types import Message
 from aiogram.filters.command import Command
 import asyncio
+from button import kb1
 
 import config
+from randomfox import fox
 
 
 logging.basicConfig(
@@ -22,7 +24,7 @@ dp = Dispatcher()
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     logging.info(f"{message.from_user.id} использовал /start")
-    await message.answer("Привет!11111111 Я эхо-бот на aiogram 3. Используй /help для списка команд.")
+    await message.answer("Привет! Я эхо-бот на aiogram 3. Используй /help для списка команд.",reply_markup=kb1)
 
 # Команда /help
 @dp.message(Command("help"))
@@ -34,12 +36,39 @@ async def cmd_help(message: types.Message):
 @dp.message(Command("about"))
 async def cmd_about(message: types.Message):
     logging.info(f"{message.from_user.id} использовал /about")
-    await message.answer("Этот бот создан на aiogram 3. Он повторяет ваши сообщения и выполняет команды.")
+    await message.answer("это эхо бот")
 
 
-@dp.message()
-async def echo_handler(message: Message):
-    await message.answer(message.text)  # Отправляет обратно то же сообщение
+
+
+# Обработчик для команды /bear
+@dp.message(Command("bear"))
+@dp.message(Command("медведь"))
+@dp.message(F.text.func(lambda text: "покажи медведя" in text.lower()))
+async def cmd_bear(message: types.Message):
+    logging.info(f"{message.from_user.id} использовал /bear")
+    await message.answer("вот медведь 🐻")
+    #await message.answer_dice(emoji="🐻")
+
+# Обработчик для команды /fox
+@dp.message(Command("fox"))
+@dp.message(Command("лиса"))
+@dp.message(F.text.func(lambda text: "покажи лису" in text.lower()))
+async def cmd_fox(message: types.Message):
+    logging.info(f"{message.from_user.id} использовал /fox")
+    img_fox = fox()
+    await message.answer("вот лиса ")
+    #await message.answer_photo(photo=img_fox)
+    await bot.send_photo(message.from_user.id,photo=img_fox)
+
+#хендлер на сообщение
+@dp.message(F.text)
+
+async def msg_echo (message: types.Message):
+    msg_user = message.text.lower()
+    name_user = message.chat.first_name
+    if 'привет' in msg_user:
+     await message.answer(f'Привет,{name_user} ,{msg_user}')
 
 async def main():
     print("Бот запущен...")
