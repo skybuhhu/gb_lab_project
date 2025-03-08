@@ -4,7 +4,7 @@ from aiogram import Router, types ,F
 from aiogram.types import Message
 from aiogram.filters.command import Command
 import asyncio
-from less3.keyboards.prof_button import make_row_keyboard
+from less3.keyboards.prof_button import make_row_keyboard, CANCEL_BUTTON
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
@@ -34,7 +34,6 @@ class ChoiseProfile (StatesGroup):
     grade = State()
 
 
-
 # Команда /prof
 @router.message(Command("prof"))
 async def cmd_prof(message: types.Message, state:FSMContext):
@@ -53,6 +52,16 @@ async def prof_choisen(message: types.Message, state:FSMContext):
         reply_markup=make_row_keyboard(available_grades))
     await state.set_state(ChoiseProfile.grade)
 
+# Обработка отмены при выборе профессии
+@router.message(ChoiseProfile.job, F.text == CANCEL_BUTTON)
+async def cancel_choise_job(message: types.Message, state: FSMContext):
+    await message.answer(
+        text="Приходите в следующий раз",
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+    await state.clear()
+
+# Обработка некорректного ввода при выборе профессии
 @router.message(ChoiseProfile.job)
 async def prof_choisen1(message: types.Message, state:FSMContext):
     await message.answer(
@@ -60,6 +69,7 @@ async def prof_choisen1(message: types.Message, state:FSMContext):
         reply_markup=make_row_keyboard(available_jobs))
     await state.set_state(ChoiseProfile.job)
 
+# Обработка выбора уровня
 @router.message(ChoiseProfile.grade, F.text.in_(available_grades))
 async def prof_choisen2(message: types.Message, state:FSMContext):
     await state.update_data(grade=message.text)
@@ -70,7 +80,16 @@ async def prof_choisen2(message: types.Message, state:FSMContext):
         reply_markup=types.ReplyKeyboardRemove())
     await state.clear()
 
+# Обработка отмены при выборе уровня
+@router.message(ChoiseProfile.grade, F.text == CANCEL_BUTTON)
+async def cancel_choise_grade(message: types.Message, state: FSMContext):
+    await message.answer(
+        text="Приходите в следующий раз",
+        reply_markup=types.ReplyKeyboardRemove()
+    )
+    await state.clear()
 
+# Обработка некорректного ввода при выборе уровня
 @router.message(ChoiseProfile.grade)
 async def prof_choisen3(message: types.Message, state:FSMContext):
     await message.answer(
