@@ -5,6 +5,8 @@ from aiogram.filters.command import Command
 import asyncio
 from button import kb1
 
+from random import randint
+
 import config
 from randomfox import fox
 
@@ -60,6 +62,14 @@ async def cmd_fox(message: types.Message):
     await message.answer("вот лиса ")
     #await message.answer_photo(photo=img_fox)
     await bot.send_photo(message.from_user.id,photo=img_fox)
+
+
+#фильтер на текст randommodule
+@dp.message(F.text.lower() == 'num')
+async def msg_random (message: types.Message):
+    number = randint (1, 10)
+    await message.answer(f'{number}')
+
 
 #хендлер на сообщение
 @dp.message(F.text)
