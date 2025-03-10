@@ -1,30 +1,17 @@
 import logging
-from aiogram import Bot, Dispatcher, types ,F
-from aiogram.types import Message
-from aiogram.filters.command import Command
+from aiogram import Bot, Dispatcher
 import asyncio
 from hednlers import carrier_choise, common
-
-
 import config
-
-
-
-
-
-
-
-
 
 
 async def main():
     logging.basicConfig(
-        level=logging.INFO,  # Уровень логирования (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+        level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s"
     )
 
-    TOKEN = config.token  # Замени на свой токен
-
+    TOKEN = config.token
     bot = Bot(token=TOKEN)
     dp = Dispatcher()
 
@@ -32,7 +19,15 @@ async def main():
     dp.include_router(common.router)
 
     print("Бот запущен...")
-    await dp.start_polling(bot)
+
+    try:
+        await dp.start_polling(bot)
+    finally:
+        await bot.session.close()  # Закрываем сессию при остановке
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nБот остановлен пользователем.")
